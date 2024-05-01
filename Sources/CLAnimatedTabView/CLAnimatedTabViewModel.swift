@@ -18,7 +18,7 @@ import SwiftUI
 ///     - shadowY: Y offset of tab bar drop shadow
 ///     - tabNames: String array of names for tab bar items
 ///     - tabBarItemViewModel: View model for tab bar items
-public class CLAnimatedTabViewModel: ObservableObject {
+public final class CLAnimatedTabViewModel: ObservableObject {
     /// Height for tab bar
     /// # Notes #
     /// Default value is 48.0
@@ -52,15 +52,15 @@ public class CLAnimatedTabViewModel: ObservableObject {
     /// View model for tab bar items
     @Published var tabBarItemViewModel: CLAnimatedTabViewItemModel
     
-    init(tabBarHeight: CGFloat = 48.0,
-         backgroundColor: Color = .white,
-         displayTabBarShadow: Bool = true,
-         shadowOpacity: CGFloat = 0.13,
-         shadowRadius: CGFloat = 2.0,
-         shadowX: CGFloat = 0.0,
-         shadowY: CGFloat = 2.0,
-         tabNames: [String],
-         tabBarItemViewModel: CLAnimatedTabViewItemModel = CLAnimatedTabViewItemModel()) {
+    public init(tabBarHeight: CGFloat = 48.0,
+                backgroundColor: Color = .white,
+                displayTabBarShadow: Bool = true,
+                shadowOpacity: CGFloat = 0.13,
+                shadowRadius: CGFloat = 2.0,
+                shadowX: CGFloat = 0.0,
+                shadowY: CGFloat = 2.0,
+                tabNames: [String],
+                tabBarItemViewModel: CLAnimatedTabViewItemModel = CLAnimatedTabViewItemModel()) {
         self.tabBarHeight = tabBarHeight
         self.backgroundColor = backgroundColor
         self.displayTabBarShadow = displayTabBarShadow
@@ -73,16 +73,16 @@ public class CLAnimatedTabViewModel: ObservableObject {
     }
 }
 
-public class CLAnimatedTabViewItemModel: ObservableObject {
+public final class CLAnimatedTabViewItemModel: ObservableObject {
     @Published var capsuleHeight: CGFloat
     @Published var font: Font
     @Published var inactiveTextColor: Color
     @Published var activeTextColor: Color
    
-    init(capsuleHeight: CGFloat = 2.0,
-         font: Font = Font.system(size: 15.0),
-         inactiveTextColor: Color = Color.gray,
-         activeTextColor: Color = Color.blue) {
+    public init(capsuleHeight: CGFloat = 2.0,
+                font: Font = Font.system(size: 15.0),
+                inactiveTextColor: Color = Color.gray,
+                activeTextColor: Color = Color.blue) {
         self.capsuleHeight = capsuleHeight
         self.font = font
         self.inactiveTextColor = inactiveTextColor
