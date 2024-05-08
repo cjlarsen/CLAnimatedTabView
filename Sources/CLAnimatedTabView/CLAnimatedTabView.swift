@@ -20,18 +20,18 @@ public struct CLAnimatedTabView: View {
     
     @State var currentTab: Int = 0
     @ObservedObject var viewModel: CLAnimatedTabViewModel
-    private let injectedView: [AnyView]
+    private let injectedViews: [AnyView]
     
-    public init<T>(viewModel: CLAnimatedTabViewModel, @ViewBuilder injectedView: @escaping () -> TupleView<T>) {
+    public init<T>(viewModel: CLAnimatedTabViewModel, @ViewBuilder injectedViews: @escaping () -> TupleView<T>) {
         self.viewModel = viewModel
-        self.injectedView = injectedView().getViews
+        self.injectedViews = injectedViews().getViews
     }
     
     public var body: some View {
         ZStack(alignment: .top) {
             TabView(selection: $currentTab) {
-                ForEach(injectedView.indices, id: \.self) { index in
-                    injectedView[index]
+                ForEach(injectedViews.indices, id: \.self) { index in
+                    injectedViews[index]
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
