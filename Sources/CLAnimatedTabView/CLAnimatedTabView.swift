@@ -20,20 +20,24 @@ public struct CLAnimatedTabView<Content: View>: View {
     
     @State var currentTab: Int = 0
     @ObservedObject var viewModel: CLAnimatedTabViewModel
-    private let injectedView: () -> Content
+    private let injectedView: [AnyView]
     
-    public init(viewModel: CLAnimatedTabViewModel, @ViewBuilder injectedView: @escaping () -> Content) {
+    public init(viewModel: CLAnimatedTabViewModel, @ViewBuilder injectedView: @escaping () -> TupleView<any View>) {
         self.viewModel = viewModel
-        self.injectedView = injectedView
+        self.injectedView = injectedView().getViews
     }
     
     public var body: some View {
         ZStack(alignment: .top) {
-            TabView(selection: $currentTab, content: injectedView)
-                .tabViewStyle(.page(indexDisplayMode: .never))
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-                .animation(.easeInOut, value: currentTab)
-                .padding(.top, viewModel.tabBarHeight)
+            TabView(selection: $currentTab) {
+                ForEach(injectedView.indices, id: \.self) { index in
+                    injectedView[index]
+                }
+            }
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+            .animation(.easeInOut, value: currentTab)
+            .padding(.top, viewModel.tabBarHeight)
             
             TabBarView(currentTab: $currentTab,
                        tabBarItemNames: $viewModel.tabNames,
@@ -138,3 +142,30 @@ struct CLTabViewButtonStyle: ButtonStyle {
     }
 }
 #endif
+
+
+extension TupleView {
+    var getViews: [AnyView] {
+        makeArray(from: value)
+    }
+    
+    private struct GenericView {
+        let body: Any
+        
+        var anyView: AnyView? {
+            AnyView(_fromValue: body)
+        }
+    }
+    
+    private func makeArray<Tuple>(from tuple: Tuple) -> [AnyView] {
+        func convert(child: Mirror.Child) -> AnyView? {
+            withUnsafeBytes(of: child.value) { ptr -> AnyView? in
+                let binded = ptr.bindMemory(to: GenericView.self)
+                return binded.first?.anyView
+            }
+        }
+        
+        let tupleMirror = Mirror(reflecting: tuple)
+        return tupleMirror.children.compactMap(convert)
+    }
+}
