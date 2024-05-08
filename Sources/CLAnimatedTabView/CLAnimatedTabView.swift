@@ -22,7 +22,7 @@ public struct CLAnimatedTabView<Content: View>: View {
     @ObservedObject var viewModel: CLAnimatedTabViewModel
     private let injectedView: [AnyView]
     
-    public init(viewModel: CLAnimatedTabViewModel, @ViewBuilder injectedView: @escaping () -> TupleView<any View>) {
+    public init<T>(viewModel: CLAnimatedTabViewModel, @ViewBuilder injectedView: @escaping () -> TupleView<T>) {
         self.viewModel = viewModel
         self.injectedView = injectedView().getViews
     }
