@@ -16,7 +16,7 @@ import Foundation
 import SwiftUI
 
 #if os(iOS)
-public struct CLAnimatedTabView<Content: View>: View {
+public struct CLAnimatedTabView: View {
     
     @State var currentTab: Int = 0
     @ObservedObject var viewModel: CLAnimatedTabViewModel
