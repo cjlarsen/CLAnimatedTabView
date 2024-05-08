@@ -16,22 +16,22 @@ import Foundation
 import SwiftUI
 
 #if os(iOS)
-public struct CLAnimatedTabView<Content: View>: View {
+public struct CLAnimatedTabView: View {
     
     @State var currentTab: Int = 0
     @ObservedObject var viewModel: CLAnimatedTabViewModel
-    var views: [Content]
+    private let injectedViews: [AnyView]
     
-    public init(viewModel: CLAnimatedTabViewModel, _ views: Content...) {
+    public init<T>(viewModel: CLAnimatedTabViewModel, @ViewBuilder injectedViews: @escaping () -> TupleView<T>) {
         self.viewModel = viewModel
-        self.views = views
+        self.injectedViews = injectedViews().getViews
     }
     
     public var body: some View {
         ZStack(alignment: .top) {
             TabView(selection: $currentTab) {
-                ForEach(views.indices, id: \.self) { index in
-                    views[index]
+                ForEach(injectedViews.indices, id: \.self) { index in
+                    injectedViews[index]
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
@@ -142,3 +142,31 @@ struct CLTabViewButtonStyle: ButtonStyle {
     }
 }
 #endif
+
+//  referenced from George's answer here: https://stackoverflow.com/questions/64238485/how-to-loop-over-viewbuilder-content-subviews-in-swiftui
+// MARK: TupleView extension
+extension TupleView {
+    var getViews: [AnyView] {
+        makeArray(from: value)
+    }
+    
+    private struct GenericView {
+        let body: Any
+        
+        var anyView: AnyView? {
+            AnyView(_fromValue: body)
+        }
+    }
+    
+    private func makeArray<Tuple>(from tuple: Tuple) -> [AnyView] {
+        func convert(child: Mirror.Child) -> AnyView? {
+            withUnsafeBytes(of: child.value) { ptr -> AnyView? in
+                let binded = ptr.bindMemory(to: GenericView.self)
+                return binded.first?.anyView
+            }
+        }
+        
+        let tupleMirror = Mirror(reflecting: tuple)
+        return tupleMirror.children.compactMap(convert)
+    }
+}
