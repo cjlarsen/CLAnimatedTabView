@@ -141,7 +141,6 @@ struct CLTabViewButtonStyle: ButtonStyle {
             .foregroundColor(.accentColor)
     }
 }
-#endif
 
 //  referenced from George's answer here: https://stackoverflow.com/questions/64238485/how-to-loop-over-viewbuilder-content-subviews-in-swiftui
 // MARK: TupleView extension
@@ -170,3 +169,4 @@ extension TupleView {
         return tupleMirror.children.compactMap(convert)
     }
 }
+#endif

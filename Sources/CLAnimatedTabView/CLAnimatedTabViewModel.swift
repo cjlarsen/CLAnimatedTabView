@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+#if os(iOS)
 /// View Model used for CLAnimatedTabView
 /// - Parameters:
 ///     - tabBarHeight: Height for the tab bar
@@ -89,3 +89,4 @@ public final class CLAnimatedTabViewItemModel: ObservableObject {
         self.activeTextColor = activeTextColor
     }
 }
+#endif
